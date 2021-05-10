@@ -1,4 +1,4 @@
 # Project exclude paths
 /venv/
-/pythonProject4/inventory.csv
+__pycache__
 
