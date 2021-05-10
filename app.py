@@ -1,6 +1,9 @@
 from peewee import *
+from collections import OrderedDict
 import datetime
 import csv
+import sys
+
 
 db = SqliteDatabase('inventory.db')
 
@@ -22,7 +25,7 @@ def initialize_db():
 
 
 def load_to_db(file_name: str):
-    """Takes cleaved csv file and loads all rows into sqlite database,
+    """Takes cleaned csv file name and loads all rows into sqlite database,
         replaces duplicates with the most recently updated item
     """
     with open(file_name) as file:
@@ -51,8 +54,8 @@ def load_to_db(file_name: str):
 
 
 def clean_data(initial_file_name: str, cleaned_file_name: str):
-    # takes a csv file name and a desired target csv file name as strings
-    # writes cleaned data to the target file
+    """takes a csv file name and a desired target csv file name as strings
+    writes cleaned data to the target file"""
 
     with open(initial_file_name, newline='') as initial_file:
         with open(cleaned_file_name, 'w') as cleaned_file:
@@ -73,7 +76,7 @@ def clean_data(initial_file_name: str, cleaned_file_name: str):
 
 
 def create_entry():
-    """Add or Update Product Entry"""
+    """Add a new product to the database"""
 
     name = input('Product Name: ').capitalize()
     quantity = input('Product Quantity: ')
@@ -91,7 +94,7 @@ def create_entry():
 
 
 def view_entry():
-    """View Entry"""
+    """View a single product's inventory"""
     try:
         input_id: int = int(input('Enter product id: '))
         selected_product = Product.get_by_id(input_id)
@@ -107,7 +110,7 @@ def view_entry():
 
 
 def db_backup():
-    """Create backup of database"""
+    """Make a backup of the entire inventory"""
     data = Product.select().dicts()
     with open('backup.csv', 'w') as backup_file:
         fieldnames = ['product_id', 'product_name', 'product_price', 'product_quantity', 'date_updated']
@@ -123,3 +126,34 @@ def delete_entry(key):
     entry.delete_instance()
     print('Deleted')
 
+
+def display_menu():
+    menu = OrderedDict(
+        [
+            ('v', view_entry),
+            ('a', create_entry),
+            ('b', db_backup),
+        ]
+    )
+
+    user_input = None
+    print('Press q for exit at any time')
+    while user_input != 'q':
+        print('Here are the options:')
+        for key, option in menu.items():
+            print(key, option.__doc__)
+
+        user_input = input('Press corresponding letter for desired function: ').lower().strip()
+
+        if user_input in menu:
+            menu[user_input]()
+        elif user_input == 'q':
+            sys.exit()
+        else:
+            print('This is not a valid option! Please press a valid letter from the menu.')
+
+
+initialize_db()
+clean_data('inventory.csv', 'cleaned_inventory.csv')
+load_to_db('cleaned_inventory.csv')
+display_menu()
