@@ -99,10 +99,12 @@ def view_entry():
         input_id: int = int(input('Enter product id: '))
         selected_product = Product.get_by_id(input_id)
         date_str = selected_product.date_updated.strftime('%b %d %Y %H:%M:%S')
+        print('--Product Information--')
         print(f'Product Name: {selected_product.product_name} '
               f'\nPrice: {selected_product.product_price} '
               f'\nQuantity: {selected_product.product_quantity} '
               f'\nDate Updated: {date_str}')
+        print('--End of entry--')
 
     except DoesNotExist:
         print('Oops! No entry with this id! Please enter a valid id!')
