@@ -153,7 +153,8 @@ def display_menu():
             print('This is not a valid option! Please press a valid letter from the menu.')
 
 
-initialize_db()
-clean_data('inventory.csv', 'cleaned_inventory.csv')
-load_to_db('cleaned_inventory.csv')
-display_menu()
+if __name__ == '__main__':
+    initialize_db()
+    clean_data('inventory.csv', 'cleaned_inventory.csv')
+    load_to_db('cleaned_inventory.csv')
+    display_menu()
