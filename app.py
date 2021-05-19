@@ -84,7 +84,8 @@ def create_entry():
         quantity: int = int(input('Product Quantity: '))
         price: float = float(input('Product Price in $: '))
         price: float = price * 100
-        Product.create(product_name=name, product_quantity=quantity, product_price=price)
+        price_int: int = int(price)
+        Product.create(product_name=name, product_quantity=quantity, product_price=price_int)
         print('Product added to the database!')
     except ValueError:
         print('Oops! Invalid input! Please enter numbers only as quantity or price!')
@@ -92,7 +93,7 @@ def create_entry():
     except IntegrityError:
         duplicate = Product.get(Product.product_name == name)
         duplicate.product_quantity = quantity
-        duplicate.product_price = price
+        duplicate.product_price = price_int
         duplicate.date_updated = datetime.datetime.now()
         duplicate.save()
         print(f"Product information for {duplicate.product_name} is updated!")
